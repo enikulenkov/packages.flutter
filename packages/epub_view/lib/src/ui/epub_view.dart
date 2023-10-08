@@ -338,7 +338,7 @@ class _EpubViewState extends State<EpubView> {
       children: <Widget>[
         if (chapterIndex >= 0 && paragraphIndex == 0)
           builders.chapterDividerBuilder(chapters[chapterIndex]),
-        Html(
+        SelectionArea(child: Html(
           data: paragraphs[index].element.outerHtml,
           onLinkTap: (href, _, __) => onExternalLinkPressed(href!),
           style: {
@@ -366,6 +366,7 @@ class _EpubViewState extends State<EpubView> {
             ),
           ],
         ),
+        ) // SelectionArea
       ],
     );
   }
