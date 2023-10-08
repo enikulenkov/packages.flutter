@@ -96,11 +96,38 @@ class _EpubViewState extends State<EpubView> {
     super.dispose();
   }
 
+  // Returns list of chapters from list of Spine items.
+  // A fallback function in case chapters are not found in NavigationMap.
+  List<EpubChapter> parseChaptersFromSpine(EpubBook document) {
+    final List<EpubChapter> result = [];
+
+    var spineItems = _controller._document!.Schema!.Package!.Spine!.Items!;
+    for (final spineItem in spineItems) {
+      String ref = spineItem.IdRef!;
+      var mfst = _controller._document!.Schema!.Package!.Manifest!;
+      for (final mfstItem in mfst.Items!) {
+        if (mfstItem.Id! == ref) {
+          String href = mfstItem.Href!;
+          EpubChapter chapter = EpubChapter();
+          chapter.ContentFileName = href;
+          chapter.HtmlContent = _controller._document!.Content!.Html![href]!.Content!;
+          // Anchor is used in other parts of code to search for spine index (e.g. in CFI generator)
+          chapter.Anchor = ref;
+          result.add(chapter);
+        }
+      }
+    }
+    return result;
+  }
+
   Future<bool> _init() async {
     if (_controller.isBookLoaded.value) {
       return true;
     }
     _chapters = parseChapters(_controller._document!);
+    if (_chapters.isEmpty) {
+      _chapters = parseChaptersFromSpine(_controller._document!);
+    }
     final parseParagraphsResult =
         parseParagraphs(_chapters, _controller._document!.Content);
     _paragraphs = parseParagraphsResult.flatParagraphs;
