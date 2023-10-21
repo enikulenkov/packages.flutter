@@ -76,24 +76,33 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late EpubController _epubReaderController;
+  late EpubController _epubReaderController_ru;
 
   @override
   void initState() {
     _epubReaderController = EpubController(
       document:
           // EpubDocument.openAsset('assets/New-Findings-on-Shirdi-Sai-Baba.epub'),
-          EpubDocument.openAsset('assets/New-Findings-on-Shirdi-Sai-Baba.epub'),
+          //EpubDocument.openAsset('assets/New-Findings-on-Shirdi-Sai-Baba.epub'),
+          EpubDocument.openAsset('assets/Alice_Adventures_in_Wonderland_exp.epub'),
+          //EpubDocument.openFile(File('./assets/asimov-genetic-effects-of-radiation.epub')),
       // epubCfi:
       //     'epubcfi(/6/26[id4]!/4/2/2[id4]/22)', // book.epub Chapter 3 paragraph 10
       // epubCfi:
       //     'epubcfi(/6/6[chapter-2]!/4/2/1612)', // book_2.epub Chapter 16 paragraph 3
     );
+    _epubReaderController_ru = EpubController(
+      document:
+          EpubDocument.openAsset('assets//Приключения Алисы в стране чудес_exp.epub'),
+    );
+
     super.initState();
   }
 
   @override
   void dispose() {
     _epubReaderController.dispose();
+    _epubReaderController_ru.dispose();
     super.dispose();
   }
 
@@ -118,13 +127,31 @@ class _MyHomePageState extends State<MyHomePage> {
         drawer: Drawer(
           child: EpubViewTableOfContents(controller: _epubReaderController),
         ),
-        body: EpubView(
-          builders: EpubViewBuilders<DefaultBuilderOptions>(
-            options: const DefaultBuilderOptions(),
-            chapterDividerBuilder: (_) => const Divider(),
-          ),
-          controller: _epubReaderController,
-        ),
+        body: Column(
+          children: <Widget> [
+            Expanded (
+              child: EpubView(
+                builders: EpubViewBuilders<DefaultBuilderOptions>(
+                  options: const DefaultBuilderOptions(),
+                  chapterDividerBuilder: (_) => const Divider(),
+                ),
+                controller: _epubReaderController,
+              )
+            ),
+            Divider(
+              color: Colors.black
+            ),
+            Expanded (
+              child: EpubView(
+                builders: EpubViewBuilders<DefaultBuilderOptions>(
+                  options: const DefaultBuilderOptions(),
+                  chapterDividerBuilder: (_) => const Divider(),
+                ),
+                controller: _epubReaderController_ru,
+              )
+            )
+          ]
+        )
       );
 
   void _showCurrentEpubCfi(context) {
