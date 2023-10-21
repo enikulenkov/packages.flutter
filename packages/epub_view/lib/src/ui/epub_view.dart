@@ -10,6 +10,7 @@ import 'package:epub_view/src/data/models/paragraph.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:flutter/gestures.dart';
 
 export 'package:epubx/epubx.dart' hide Image;
 
@@ -389,6 +390,21 @@ class _EpubViewState extends State<EpubView> {
                 return Image(
                   image: MemoryImage(content),
                 );
+              },
+            ),
+            TagExtension.inline(
+              tagsToExtend: {"span"},
+              builder: (spanContext) {
+                return TextSpan(
+                    text: spanContext.innerHtml,
+                    style: TextStyle(color: Colors.green),
+                    recognizer: TapGestureRecognizer()..onTap = () => {
+                      print("Span context:"),
+                      print(spanContext.node),
+                      print(spanContext.attributes),
+                      print(spanContext.styledElement!)
+                    },
+                  );
               },
             ),
           ],
